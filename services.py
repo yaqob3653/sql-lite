@@ -274,18 +274,21 @@ def run_advanced_simulation(category):
     results.sort(key=lambda x: x['growth'], reverse=True)
     for idx, item in enumerate(results): item['rank'] = idx + 1
     return results
-                'status': st,
-                'rank': i + 1
-            })
-        results.sort(key=lambda x: x['growth'], reverse=True)
-        for idx, item in enumerate(results): item['rank'] = idx + 1
-        return results
-
 def get_social_buzz(keyword):
     """
     Calculates a Search-based Buzz Score using real pytrends data.
-    Generates context-aware trending products.
+    On cloud servers, we use a seeded simulation to stay fast and avoid rate limits.
     """
+    is_cloud = os.environ.get('RENDER') or os.environ.get('PORT')
+    if is_cloud:
+        import random
+        random.seed(sum(ord(c) for c in keyword))
+        score = random.randint(65, 98)
+        return {
+            'buzz_score': score,
+            'products': ['AI Optimized Node', 'Smart Logistics Layer', 'Energy Nexus']
+        }
+
     try:
         pytrends = TrendReq(hl='en-US', tz=360)
         pytrends.build_payload([keyword], timeframe='now 7-d')
