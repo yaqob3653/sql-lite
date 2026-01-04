@@ -19,8 +19,22 @@ if os.name == 'nt':
 def get_market_trends(keyword):
     """
     Fetches interest over time from Google Trends.
-    Returns a dictionary of dates and interest values.
+    On cloud servers, we prefer simulation to avoid Google's 429 (Rate Limit) blocks.
     """
+    # Force simulation on cloud environments for stability and speed
+    is_cloud = os.environ.get('RENDER') or os.environ.get('PORT')
+    if is_cloud:
+        import random
+        from datetime import datetime, timedelta
+        fallback = {}
+        curr = datetime.now()
+        # Seed based on keyword for deterministic (consistent) results
+        random.seed(sum(ord(c) for c in keyword)) 
+        for i in range(12, 0, -1):
+            date_str = (curr - timedelta(days=i*30)).strftime('%Y-%m-%d')
+            fallback[date_str] = random.randint(40, 95)
+        return fallback
+
     try:
         pytrends = TrendReq(hl='en-US', tz=360)
         kw_list = [keyword]
@@ -208,46 +222,58 @@ def get_advanced_trends(category='all', timeframe='today 1-m'):
 
     except Exception as e:
         print(f"Error fetching advanced trends: {e}")
-        import random
-        results = []
-        # Fallback simulation with High-End 2026 dataset
-        if category == 'all':
-            items = [
-                ('Global AI Hubs', 142000, 85, 'Exploding'),
-                ('Green Supply Nodes', 89000, 42, 'Rising'),
-                ('Trade Ledger 2.0', 115000, 68, 'Exploding'),
-                ('Hyper-Speed Freight', 34000, 12, 'Rising'),
-                ('Quantum Logistics', 72000, 115, 'Exploding'),
-                ('Zero-Carbon Import', 55000, 24, 'Rising'),
-                ('Market Elasticity AI', 91000, -8, 'Volatile'),
-                ('Cross-Border Neural', 48000, 52, 'Exploding'),
-                ('Smart Customs', 64000, 18, 'Rising'),
-                ('Data-Driven Sourcing', 128000, 31, 'Rising'),
-                ('Blockchain Trade', 98000, 77, 'Exploding'),
-                ('Autonomous Warehouses', 76000, 45, 'Rising'),
-                ('Predictive Demand AI', 112000, 92, 'Exploding'),
-                ('Carbon Credit Markets', 54000, 28, 'Rising'),
-                ('Digital Twin Supply', 83000, 61, 'Exploding')
-            ]
-        else:
-            # Generate 15 items per category to ensure "Big Data" feel
-            sim_words = sector_kws.get(category, ['Enterprise Logic', 'Nexus Point', 'System Alpha'])
-            items = []
-            for i, word in enumerate(sim_words):
-                # Use category name to seed growth so they look different per filter
-                seed = sum(ord(c) for c in (category + word))
-                random.seed(seed)
-                val = random.randint(-10, 140)
-                vol = random.randint(10, 150) * 1000
-                st = 'Exploding' if val > 40 else 'Rising' if val > 0 else 'Stable' if val > -10 else 'Volatile'
-                items.append((word, vol, val, st))
-        
-        for i, (word, vol, growth, st) in enumerate(items):
-            results.append({
-                'keyword': word,
-                'volume': f"{vol:,}",
-                'growth': growth,
-                'sentiment': st,
+        return run_advanced_simulation(category)
+
+def run_advanced_simulation(category):
+    import random
+    results = []
+    # Shared keywords for sectors
+    sector_kws = {
+        'tech': ['Artificial Intelligence', 'NVIDIA GPU', 'Quantum Computing', '6G Mesh Networks', 'Neural Interfaces', 'Edge Robotics', 'Cybersecurity AI', 'Web3 Infrastructure', 'Autonomous Agents', 'Nano-Tech Sensors'],
+        'fashion': ['Sustainable Fashion', 'Digital Clothing', 'Vintage Retail', 'Smart Textiles', 'Bio-Leather', 'Circular Ecosystems', 'AR Fitting Rooms', 'Upcycled Luxury', 'Eco-Cotton', 'Modular Wearables'],
+        'food': ['Lab Grown Meat', 'Vertical Farming', 'Plant Based Protein', 'Algae Superfood', 'Ghost Kitchens', 'Functional Drinks', 'Precision Nutrition', 'Ancient Grains', 'Zero-Waste Packaging', 'Fermented Tech'],
+        'gym': ['VR Fitness', 'Smart Gym', 'Peloton Tech', 'Biohacking Protocols', 'Neural Recovery', 'Wearable AI', 'Predictive Training', 'Smart Stretching', 'Hybrid Workouts', 'Wellness Data']
+    }
+
+    # Fallback simulation with High-End 2026 dataset
+    if category == 'all':
+        items = [
+            ('Global AI Hubs', 142000, 85, 'Exploding'),
+            ('Green Supply Nodes', 89000, 42, 'Rising'),
+            ('Trade Ledger 2.0', 115000, 68, 'Exploding'),
+            ('Quantum Logistics', 72000, 115, 'Exploding'),
+            ('Zero-Carbon Import', 55000, 24, 'Rising'),
+            ('Market Elasticity AI', 91000, -8, 'Volatile'),
+            ('Smart Customs', 64000, 18, 'Rising'),
+            ('Data-Driven Sourcing', 128000, 31, 'Rising'),
+            ('Predictive Demand AI', 112000, 92, 'Exploding'),
+            ('Digital Twin Supply', 83000, 61, 'Exploding')
+        ]
+    else:
+        # Generate 10-15 items per category to ensure "Big Data" feel
+        sim_words = sector_kws.get(category, ['Enterprise Logic', 'Nexus Point', 'System Alpha'])
+        items = []
+        for i, word in enumerate(sim_words):
+            # Use category name to seed growth so they look different per filter
+            seed = sum(ord(c) for c in (category + word))
+            random.seed(seed)
+            val = random.randint(-10, 140)
+            vol = random.randint(10, 150) * 1000
+            st = 'Exploding' if val > 40 else 'Rising' if val > 0 else 'Stable' if val > -10 else 'Volatile'
+            items.append((word, vol, val, st))
+    
+    for i, (word, vol, growth, st) in enumerate(items):
+        results.append({
+            'keyword': word,
+            'volume': f"{vol:,}",
+            'growth': growth,
+            'sentiment': st,
+            'status': st,
+            'rank': i + 1
+        })
+    results.sort(key=lambda x: x['growth'], reverse=True)
+    for idx, item in enumerate(results): item['rank'] = idx + 1
+    return results
                 'status': st,
                 'rank': i + 1
             })
