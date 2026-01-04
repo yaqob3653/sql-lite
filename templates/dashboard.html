@@ -1,0 +1,566 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Live Market Ticker -->
+<!-- Live Market Ticker (Professional) -->
+<div
+    style="background: #0a0a0a; border-bottom: 1px solid #1a1a1a; padding: 0; overflow: hidden; position: relative; z-index: 20; height: 48px; display: flex; align-items: center;">
+    <div style="display: flex; align-items: center; height: 100%;">
+
+        <!-- Live Indicator Label -->
+        <div
+            style="background: #0a0a0a; padding: 0 1.5rem; z-index: 20; display: flex; align-items: center; gap: 0.8rem; border-right: 1px solid #1a1a1a; height: 100%; position: absolute; left: 0; min-width: 140px;">
+            <div
+                style="width: 6px; height: 6px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px rgba(239, 68, 68, 0.4); animation: pulse 2s infinite;">
+            </div>
+            <span
+                style="font-family: 'Inter', sans-serif; font-weight: 600; color: #fff; letter-spacing: 0.5px; font-size: 0.7rem; white-space: nowrap; opacity: 0.9;">LIVE
+                MARKETS</span>
+        </div>
+
+        <!-- Scrolling Content -->
+        <div class="marquee-content"
+            style="animation-duration: 60s; display: flex; align-items: center; padding-left: 180px;">
+            {% if marquee %}
+            {% for item in marquee %}
+            <span
+                style="display: inline-flex; align-items: center; margin-right: 3rem; font-family: 'Inter', monospace; font-size: 0.8rem; white-space: nowrap;">
+                <span style="color: #666; font-weight: 600; text-transform: uppercase; margin-right: 0.8rem;">{{
+                    item.label.split(' ', 1)[1] if ' ' in item.label else item.label }}</span>
+                <span style="color: #fff; font-weight: 600;">{{ item.price }}</span>
+                <span
+                    style="--item-color: {{ '#94a3b8' if item.neutral else ('#4ade80' if item.up else '#ef4444') }}; color: var(--item-color); font-weight: 500; margin-left: 0.5rem; font-size: 0.75rem;">
+                    {{ item.change }}
+                </span>
+            </span>
+            {% endfor %}
+            {% else %}
+            <span
+                style="display: inline-flex; align-items: center; margin-right: 3rem; color: #666; font-size: 0.8rem;">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round"
+                    style="margin-right: 8px; animation: spin 4s linear infinite;">
+                    <path d="M12 2v4" />
+                    <path d="m16.2 7.8 2.9-2.9" />
+                    <path d="M18 12h4" />
+                    <path d="m16.2 16.2 2.9 2.9" />
+                    <path d="M12 18v4" />
+                    <path d="m4.9 19.1 2.9-2.9" />
+                    <path d="M2 12h4" />
+                    <path d="m4.9 4.9 2.9 2.9" />
+                </svg>
+                ESTABLISHING CONNECTION...
+            </span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <div class="db-sidebar" style="background: #fafafa; border-right: 1px solid #eaeaea;">
+        <div style="margin-bottom: 2rem;">
+            <div
+                style="color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; font-weight: 600; padding-left: 12px;">
+                Main
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="db-link active"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="7" height="9" x="3" y="3" rx="1" />
+                    <rect width="7" height="5" x="14" y="3" rx="1" />
+                    <rect width="7" height="9" x="14" y="12" rx="1" />
+                    <rect width="7" height="5" x="3" y="16" rx="1" />
+                </svg>
+                Dashboard
+            </a>
+            <a href="{{ url_for('trends_page') }}" class="db-link"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                    <polyline points="16 7 22 7 22 13" />
+                </svg>
+                Market Analysis
+            </a>
+            <div
+                style="color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin: 1.5rem 0 0.8rem; font-weight: 600; padding-left: 12px;">
+                Procurement
+            </div>
+            <a href="{{ url_for('cart') }}" class="db-link"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="8" cy="21" r="1" />
+                    <circle cx="19" cy="21" r="1" />
+                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+                </svg>
+                Supplier Basket
+            </a>
+            <a href="#" class="db-link" style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path
+                        d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.74v-.47a2 2 0 0 1 1-1.74l.15-.1a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+                Settings
+            </a>
+        </div>
+
+        <!-- NEW: Trending Widget in Sidebar -->
+        <div style="margin-bottom: 2rem;">
+            <div
+                style="color: #111; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; font-weight: 700; display: flex; justify-content: space-between; align-items: center; padding-left: 12px;">
+                Top Movers
+            </div>
+            <div style="background: white; border: 1px solid #eaeaea; border-radius: 8px; overflow: hidden;">
+                {% if trends %}
+                {% for trend in trends %}
+                <div
+                    style="padding: 0.75rem 1rem; border-bottom: 1px solid #f9f9f9; font-size: 0.8rem; display: flex; justify-content: space-between; align-items: center; color: #444;">
+                    <span>{{ trend }}</span>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                        <polyline points="16 7 22 7 22 13" />
+                    </svg>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div style="padding: 1rem; font-size: 0.8rem; color: #999;">Loading trends...</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div style="margin-top: auto;">
+            <div style="padding: 0.8rem; background: #f5f5f5; border-radius: 6px; border: 1px solid #eee;">
+                <div
+                    style="font-size: 0.75rem; font-weight: 600; color: #111; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    System Status</div>
+                <div
+                    style="font-size: 0.7rem; color: #666; margin: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; font-family: monospace;">
+                    <span style="width: 4px; height: 4px; background: #10b981; border-radius: 50%;"></span>
+                    API_GATEWAY: ONLINE
+                </div>
+                <div
+                    style="font-size: 0.7rem; color: #666; margin: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; font-family: monospace;">
+                    <span style="width: 4px; height: 4px; background: #10b981; border-radius: 50%;"></span>
+                    DB_SHARD_1: ACTIVE
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="db-content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+            <div>
+                <h1 style="font-size: 2rem; font-weight: 700; letter-spacing: -1px; color: #111;">Executive Dashboard
+                </h1>
+                <p style="color: #666; font-size: 0.95rem;">Welcome back, {{ name }}</p>
+            </div>
+
+            {% if role == 'supplier' %}
+            <a href="{{ url_for('add_supplier') }}" class="btn-black">+ Add Product</a>
+            {% else %}
+            <button onclick="openProjectModal()" class="btn-black" style="font-weight: 500; font-size: 0.9rem;">
+                Create New Project
+            </button>
+            {% endif %}
+        </div>
+
+        <!-- Stats Grid (NOW LIVE) -->
+        <div class="db-grid" style="margin-bottom: 2.5rem;">
+            <div class="stat-card">
+                <div class="label">My Projects</div>
+                <div class="value">{{ total_projects }}</div>
+                <div style="color: #10b981; font-size: 0.85rem; font-weight: 500; margin-top: 0.25rem;">Active Planning
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="label">Verified Suppliers</div>
+                <div class="value">{{ total_suppliers }}</div>
+                <div style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Global & Local</div>
+            </div>
+            <div class="stat-card">
+                <style>
+                    .sentiment-up {
+                        color: #10b981;
+                    }
+
+                    .sentiment-down {
+                        color: #ef4444;
+                    }
+                </style>
+                <div class="label">Market Sentiment</div>
+                <div class="value {{ 'sentiment-up' if 'Bullish' in sentiment else 'sentiment-down' }}">
+                    {{ sentiment }}
+                </div>
+                <div style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.25rem;">Live Yahoo Finance
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Intelligence Hub (Moved inside db-content to fix overflow) -->
+        <div class="bento-card" id="marketDisplay"
+            data-history='{{ finance.history|tojson if finance and finance.history else "{}" }}'
+            data-sentiment="{{ sentiment }}"
+            style="--main-color: {{ '#00ffaa' if 'Bullish' in sentiment else '#ff3366' }}; --pulse-bg: {{ 'rgba(0, 255, 170, 0.05)' if 'Bullish' in sentiment else 'rgba(255, 51, 102, 0.05)' }}; height: 350px; background: radial-gradient(circle at top right, #111, #000); border-radius: 20px; overflow: hidden; position: relative; padding: 2rem; border: 1px solid #1a1a1a; margin-bottom: 2.5rem;">
+
+            <div
+                style="position: absolute; top: -80px; right: -80px; width: 240px; height: 240px; background: var(--pulse-bg); filter: blur(60px); border-radius: 50%; animation: pulse-glow 4s infinite alternate;">
+            </div>
+
+            <div
+                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; z-index: 10; position: relative;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                        <span
+                            style="width: 8px; height: 8px; background: var(--main-color); border-radius: 50%; box-shadow: 0 0 12px var(--main-color);"></span>
+                        <span
+                            style="color: #444; font-size: 0.65rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;">Market
+                            Hub (Yahoo Finance)</span>
+                    </div>
+                    <h3
+                        style="color: white; font-size: 1.25rem; font-weight: 800; letter-spacing: -1px; line-height: 1.1;">
+                        Velocity Analysis</h3>
+                </div>
+                <div style="text-align: right;">
+                    <div style="color: white; font-size: 1.75rem; font-weight: 900; letter-spacing: -1.5px;">{% if
+                        finance %}${{ finance.current_price }}{% else %}---{% endif %}</div>
+                    <div
+                        style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,0.05); padding: 3px 10px; border-radius: 100px;">
+                        <span style="color: var(--main-color); font-weight: 800; font-size: 0.75rem;">
+                            {{ '▲' if 'Bullish' in sentiment else '▼' }} {% if finance %}{{ finance.change_percent }}{%
+                            else %}0.0{% endif %}%
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height: 180px; position: relative; z-index: 10;">
+                <canvas id="marketIntelligenceChart"></canvas>
+            </div>
+
+            <style>
+                @keyframes pulse-glow {
+                    from {
+                        opacity: 0.2;
+                        transform: scale(1);
+                    }
+
+                    to {
+                        opacity: 0.6;
+                        transform: scale(1.3);
+                    }
+                }
+            </style>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const display = document.getElementById('marketDisplay');
+                const ctx = document.getElementById('marketIntelligenceChart').getContext('2d');
+                const financeData = JSON.parse(display.getAttribute('data-history'));
+                const sentiment = display.getAttribute('data-sentiment');
+                const labels = Object.keys(financeData);
+                const prices = Object.values(financeData);
+                const isUp = sentiment.includes('Bullish');
+                const mainColor = isUp ? '#00ffaa' : '#ff3366';
+                const chartGradient = ctx.createLinearGradient(0, 0, 0, 400);
+                chartGradient.addColorStop(0, isUp ? 'rgba(0, 255, 170, 0.3)' : 'rgba(255, 51, 102, 0.3)');
+                chartGradient.addColorStop(1, 'rgba(0,0,0,0)');
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Market Index',
+                            data: prices,
+                            borderColor: mainColor,
+                            borderWidth: 4,
+                            tension: 0.45,
+                            pointRadius: 0,
+                            pointHoverRadius: 8,
+                            pointHoverBackgroundColor: mainColor,
+                            pointHoverBorderColor: 'white',
+                            pointHoverBorderWidth: 3,
+                            fill: true,
+                            backgroundColor: chartGradient
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#0a0a0a',
+                                titleColor: '#888',
+                                bodyColor: '#fff',
+                                bodyFont: { weight: '800', size: 14 },
+                                padding: 12,
+                                cornerRadius: 12,
+                                displayColors: false,
+                                borderColor: '#222',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            y: { grid: { color: 'rgba(255,255,255,0.03)', drawBorder: false }, ticks: { color: '#444', font: { family: 'Inter', size: 10, weight: '700' } } },
+                            x: { grid: { display: false }, ticks: { display: false } }
+                        }
+                    }
+                });
+            });
+        </script>
+
+        <!-- NEW: My Projects List -->
+        <div style="margin-bottom: 3rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="font-size: 1.1rem; font-weight: 600;">My Active Projects</h3>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button class="btn-outline" style="padding: 4px 12px; font-size: 0.75rem;">Filters</button>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem;">
+                {% if projects %}
+                {% for project in projects %}
+                <div class="bento-card" style="background: white; border: 1px solid #eee; transition: all 0.3s ease;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <div
+                                style="width: 40px; height: 40px; background: #f8fafc; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #333;">
+                                {% if 'Gym' in project.business_type %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="m6.5 6.5 11 11" />
+                                    <path d="m21 21-1-1" />
+                                    <path d="m3 3 1 1" />
+                                    <path d="m18 22 4-4" />
+                                    <path d="m2 6 4-4" />
+                                    <path d="m3 10 7-7" />
+                                    <path d="m14 21 7-7" />
+                                </svg>
+                                {% elif 'Clothing' in project.business_type %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+                                    <path d="M3 6h18" />
+                                    <path d="M16 10a4 4 0 0 1-8 0" />
+                                </svg>
+                                {% elif 'Cafe' in project.business_type %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M17 8h1a4 4 0 1 1 0 8h-1" />
+                                    <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z" />
+                                    <line x1="6" x2="6" y1="2" y2="4" />
+                                    <line x1="10" x2="10" y1="2" y2="4" />
+                                    <line x1="14" x2="14" y1="2" y2="4" />
+                                </svg>
+                                {% elif 'Tech' in project.business_type %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect width="18" height="12" x="3" y="4" rx="2" ry="2" />
+                                    <line x1="2" x2="22" y1="20" y2="20" />
+                                </svg>
+                                {% elif 'Food' in project.business_type %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" />
+                                    <path d="M7 2v20" />
+                                    <path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+                                </svg>
+                                {% else %}
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path
+                                        d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 2H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+                                </svg>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <h4 style="font-size: 1.15rem; font-weight: 700; margin: 0;">{{ project.name }}</h4>
+                                <span style="font-size: 0.8rem; color: #666;">{{ project.business_type }}</span>
+                            </div>
+                        </div>
+                        <span
+                            style="background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: 100px; font-size: 0.7rem; font-weight: 700;">PLANNING</span>
+                    </div>
+
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; font-size: 0.85rem;">
+                        <div>
+                            <div
+                                style="color: #94a3b8; font-weight: 600; font-size: 0.7rem; text-transform: uppercase;">
+                                Budget</div>
+                            <div style="font-weight: 700; color: #0f172a;">${{ "{:,.0f}".format(project.budget) }}</div>
+                        </div>
+                        <div>
+                            <div style="font-weight: 700; color: #0f172a;">{{ project.location or 'Not Specified' }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <div
+                            style="display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.5rem;">
+                            <span style="color: #64748b;">Project Readiness</span>
+                            <span style="font-weight: 700;">{{ project.readiness_score }}%</span>
+                        </div>
+                        <div style="height: 6px; background: #f1f5f9; border-radius: 100px; overflow: hidden;">
+                            <div
+                                style="--readiness: {{ project.readiness_score }}%; width: var(--readiness); height: 100%; background: linear-gradient(to right, #0070f3, #00a6ff); border-radius: 100px;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <form action="{{ url_for('search') }}" method="POST">
+                        <input type="hidden" name="keyword" value="{{ project.business_type }}">
+                        <button type="submit" class="btn-black"
+                            style="width: 100%; justify-content: center; padding: 0.75rem;">Open Project →</button>
+                    </form>
+                </div>
+                {% endfor %}
+                {% else %}
+                <div
+                    style="grid-column: 1/-1; padding: 4rem; background: #fafafa; border: 1px dashed #ccc; border-radius: 16px; text-align: center;">
+                    <div style="font-size: 2.5rem; margin-bottom: 1rem; color: #ddd;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path
+                                d="M4 20h16a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.93a2 2 0 0 1-1.66-.9l-.82-1.2A2 2 0 0 0 7.93 2H4a2 2 0 0 0-2 2v13c0 1.1.9 2 2 2Z" />
+                        </svg>
+                    </div>
+                    <h4 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;">No active projects</h4>
+                    <p style="color: #666; margin-bottom: 2rem;">Create your first business plan to start the smart
+                        equipment analysis.</p>
+                    <button onclick="openProjectModal()" class="btn-black">Start New Project</button>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Compact & High-Precision Project Modal -->
+        <div id="projectModal"
+            style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; align-items: center; justify-content: center; backdrop-filter: blur(12px); padding: 1rem;">
+            <div style="background: white; width: 440px; border-radius: 20px; box-shadow: 0 40px 100px rgba(0,0,0,0.1); position: relative; overflow: hidden; border: 1px solid #eee;"
+                class="fade-in-up">
+
+                <div style="padding: 2.25rem;">
+                    <button onclick="closeProjectModal()"
+                        style="position: absolute; top: 1.25rem; right: 1.25rem; border: none; background: #f5f5f5; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #000; font-weight: bold;">&times;</button>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h2
+                            style="font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 0.25rem; color: #000;">
+                            New Project</h2>
+                        <p style="color: #666; font-size: 0.85rem;">Configure your venture parameters for analysis.</p>
+                    </div>
+
+                    <form action="{{ url_for('create_project') }}" method="POST">
+                        <div style="margin-bottom: 1.25rem;">
+                            <label
+                                style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 0.5rem; color: #999;">Project
+                                Name</label>
+                            <input type="text" name="name" class="form-control" placeholder="e.g. Urban Gym Amman"
+                                required
+                                style="border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.95rem; width: 100%; transition: all 0.2s; outline: none;">
+                        </div>
+
+                        <div style="margin-bottom: 1.25rem;">
+                            <label
+                                style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 0.5rem; color: #999;">Business
+                                Sector</label>
+                            <select name="business_type" class="form-control" required
+                                style="border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 8px; width: 100%; font-size: 0.95rem; background: white;">
+                                <option value="Gym">Fitness & Gym</option>
+                                <option value="Clothing">Clothing Store</option>
+                                <option value="Cafe">Coffee & Cafe</option>
+                                <option value="Tech">Retail Tech</option>
+                            </select>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 0.5rem; color: #999;">Budget
+                                    (USD)</label>
+                                <input type="number" name="budget" placeholder="50,000" required
+                                    style="border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.95rem; width: 100%;">
+                            </div>
+                            <div>
+                                <label
+                                    style="display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; margin-bottom: 0.5rem; color: #999;">Target
+                                    Date</label>
+                                <input type="date" name="target_date"
+                                    style="border: 1px solid #e2e8f0; padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.95rem; width: 100%;">
+                            </div>
+                        </div>
+
+                        <div
+                            style="margin-bottom: 1.5rem; background: #f9f9f9; padding: 1.25rem; border-radius: 12px; border: 1px solid #f0f0f0;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                                <label
+                                    style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; color: #999;">Priority</label>
+                                <span id="prefLabel"
+                                    style="font-size: 0.65rem; font-weight: 800; background: #000; color: #fff; padding: 2px 6px; border-radius: 4px;">BALANCED</span>
+                            </div>
+                            <input type="range" name="preference" min="0" max="100" value="50"
+                                oninput="updatePrefLabel(this.value)" style="width: 100%; accent-color: #000;">
+                            <div
+                                style="display: flex; justify-content: space-between; font-size: 0.6rem; font-weight: 600; color: #aaa; margin-top: 0.5rem;">
+                                <span>LEAN COST</span>
+                                <span>PREMIUM QUALITY</span>
+                            </div>
+                        </div>
+
+                        <button type="submit"
+                            style="width: 100%; padding: 1rem; background: #000; color: #fff; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                            onmouseover="this.style.background='#333'" onmouseout="this.style.background='#000'"
+                            onmousedown="this.style.transform='scale(0.98)'"
+                            onmouseup="this.style.transform='scale(1)'">
+                            Analyze Project <span style="font-size: 1.1rem;">→</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function openProjectModal() {
+                const modal = document.getElementById('projectModal');
+                modal.style.display = 'flex';
+                const nameInput = modal.querySelector('input[name="name"]');
+                if (nameInput) {
+                    nameInput.value = '';
+                    nameInput.focus();
+                }
+            }
+            function closeProjectModal() {
+                document.getElementById('projectModal').style.display = 'none';
+            }
+            function updatePrefLabel(val) {
+                const label = document.getElementById('prefLabel');
+                if (val < 40) label.innerText = "COST";
+                else if (val > 60) label.innerText = "QUALITY";
+                else label.innerText = "BALANCED";
+            }
+            // Close on background click
+            window.onclick = function (event) {
+                const modal = document.getElementById('projectModal');
+                if (event.target == modal) {
+                    closeProjectModal();
+                }
+            }
+        </script>
+
+    </div>
+</div>
+
+{% endblock %}

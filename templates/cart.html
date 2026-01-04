@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <div class="db-sidebar">
+        <div style="margin-bottom: 2rem;">
+            <div
+                style="color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; font-weight: 600;">
+                Menu
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="db-link">
+                📊 Dashboard
+            </a>
+            <a href="{{ url_for('trends_page') }}" class="db-link">
+                📈 Trend Analytics
+            </a>
+            <a href="{{ url_for('cart') }}" class="db-link active">
+                🛒 Supplier Basket
+            </a>
+            <a href="#" class="db-link">
+                ⚙️ Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="db-content">
+        <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 2rem;">Procurement Basket</h1>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+
+            <!-- List of Items -->
+            <div
+                style="background: white; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr
+                            style="text-align: left; background: #fafafa; border-bottom: 1px solid var(--border-color);">
+                            <th
+                                style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">
+                                Supplier</th>
+                            <th
+                                style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">
+                                Product Type</th>
+                            <th
+                                style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">
+                                MOQ</th>
+                            <th
+                                style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; text-align: right;">
+                                Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1.5rem 1rem;">
+                                <div style="font-weight: 600;">Shenzhen Tech Co.</div>
+                                <div style="font-size: 0.8rem; color: #666;">ID: #SHZ-9928</div>
+                            </td>
+                            <td style="padding: 1rem;">Electronics</td>
+                            <td style="padding: 1rem;">500 Units</td>
+                            <td style="padding: 1rem; text-align: right;">
+                                <a href="#" style="color: #ef4444; font-size: 0.9rem;">Remove</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1.5rem 1rem;">
+                                <div style="font-weight: 600;">Vietnam Textiles Ltd</div>
+                                <div style="font-size: 0.8rem; color: #666;">ID: #VN-2211</div>
+                            </td>
+                            <td style="padding: 1rem;">Apparel</td>
+                            <td style="padding: 1rem;">1000 Units</td>
+                            <td style="padding: 1rem; text-align: right;">
+                                <a href="#" style="color: #ef4444; font-size: 0.9rem;">Remove</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary Card -->
+            <div
+                style="background: #fafafa; border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; height: fit-content;">
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Order Summary</h3>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem;">
+                    <span style="color: #666;">Subtotal (Est.)</span>
+                    <span style="font-weight: 600;">$14,200</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem;">
+                    <span style="color: #666;">Shipping & Tax</span>
+                    <span style="font-weight: 600;">$1,200</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eaeaea; margin-bottom: 2rem;">
+                    <span style="font-weight: 700;">Total</span>
+                    <span style="font-weight: 700; font-size: 1.25rem;">$15,400</span>
+                </div>
+
+                <button class="btn-full" style="background: #000; color: white;">Request Formal Quote</button>
+                <div style="margin-top: 1rem; text-align: center; font-size: 0.8rem; color: #999;">
+                    Quotes are valid for 7 days.
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

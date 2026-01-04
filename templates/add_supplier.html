@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <div class="db-sidebar">
+        <div style="margin-bottom: 2rem;">
+            <div
+                style="color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; font-weight: 600;">
+                Menu
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="db-link">📊 Dashboard</a>
+            <a href="#" class="db-link active">📦 Add Product</a>
+            <a href="#" class="db-link">⚙️ Settings</a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="db-content">
+        <div style="max-width: 800px; margin: 0 auto;">
+            <div style="margin-bottom: 2rem;">
+                <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 0.5rem;">Add New Product Profile</h1>
+                <p style="color: var(--text-secondary);">Create a comprehensive profile for your product to be matched
+                    with potential buyers.</p>
+            </div>
+
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem;">
+                <form method="POST" action="">
+                    {{ form.hidden_tag() }}
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3
+                            style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f0f0f0;">
+                            Basic Information</h3>
+
+                        <div class="form-group">
+                            {{ form.name.label }}
+                            {{ form.name(class="form-control", placeholder="e.g. Premium Cotton T-Shirts",
+                            style="background: #fafafa;") }}
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                {{ form.location.label }}
+                                {{ form.location(class="form-control", style="background: #fafafa;") }}
+                            </div>
+                            <div class="form-group">
+                                {{ form.product_quality.label }}
+                                {{ form.product_quality(class="form-control", style="background: #fafafa;") }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 2rem;">
+                        <h3
+                            style="font-size: 1.1rem; font-weight: 600; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #f0f0f0;">
+                            Logistics & Pricing</h3>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div class="form-group">
+                                {{ form.shipping_cost.label }}
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 1rem; top: 0.75rem; color: #999;">$</span>
+                                    {{ form.shipping_cost(class="form-control", placeholder="0.00", style="padding-left:
+                                    2rem; background: #fafafa;") }}
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                {{ form.taxes.label }}
+                                <div style="position: relative;">
+                                    <span style="position: absolute; left: 1rem; top: 0.75rem; color: #999;">%</span>
+                                    {{ form.taxes(class="form-control", placeholder="0.00", style="padding-left: 2rem;
+                                    background: #fafafa;") }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            {{ form.contact_info.label }}
+                            {{ form.contact_info(class="form-control", placeholder="Direct contact for buyers...",
+                            style="background: #fafafa;") }}
+                        </div>
+                    </div>
+
+                    <div
+                        style="display: flex; gap: 1rem; justify-content: flex-end; align-items: center; margin-top: 3rem;">
+                        <a href="{{ url_for('dashboard') }}"
+                            style="color: #666; font-size: 0.95rem; font-weight: 500;">Cancel</a>
+                        <button type="submit" class="btn-black" style="padding: 0.85rem 2rem;">Save & Publish</button>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

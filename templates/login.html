@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <!-- Left: Form -->
+    <div class="auth-content">
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Enter your details to access your dashboard.</p>
+        </div>
+
+        <form method="POST" action="">
+            {{ form.hidden_tag() }}
+
+            <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email(class="form-control", placeholder="name@example.com") }}
+            </div>
+
+            <div class="form-group">
+                {{ form.password.label }}
+                {{ form.password(class="form-control", placeholder="••••••••") }}
+            </div>
+
+            <button type="submit" class="btn-full">Sign In</button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.9rem; color: #666;">
+            Don't have an account? <a href="{{ url_for('register') }}"
+                style="color: black; font-weight: 600; text-decoration: underline;">Sign up</a>
+        </div>
+    </div>
+
+    <!-- Right: Illustration -->
+    <div class="auth-sidebar">
+        <img src="{{ url_for('static', filename='img/auth-bg.png') }}" alt="Dynamic Professional">
+    </div>
+</div>
+{% endblock %}

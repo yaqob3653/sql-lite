@@ -1,0 +1,606 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Professionally Styled Live Market Ticker -->
+<div
+    style="background: #0a0a0a; border-bottom: 1px solid #333; padding: 1.5rem 0; overflow: hidden; position: relative; z-index: 20;">
+    <div style="display: flex; align-items: center;">
+
+        <!-- Static Label with "Live" Indicator -->
+        <div
+            style="background: #0a0a0a; padding: 0 1.5rem; z-index: 20; display: flex; align-items: center; gap: 0.8rem; border-right: 1px solid #333; height: 100%; position: absolute; left: 0; min-width: 210px;">
+            <div
+                style="width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 10px rgba(239, 68, 68, 0.5); animation: pulse 2s infinite;">
+            </div>
+            <span
+                style="font-weight: 800; color: white; letter-spacing: 1px; font-size: 0.8rem; white-space: nowrap;">MARKET
+                INTELLIGENCE</span>
+        </div>
+
+        <!-- Scrolling Ticker Content -->
+        <div class="marquee-content"
+            style="animation: scroll 45s linear infinite; display: flex; align-items: center; padding-left: 250px;">
+            {% if marquee %}
+            {% for item in marquee %}
+            <div class="ticker-item">
+                <span class="ticker-icon">{{ item.label.split(' ')[0] }}</span>
+                <span class="ticker-name">{{ item.label.split(' ', 1)[1] if ' ' in item.label else item.label }}</span>
+                <span class="ticker-value">${{ item.price }}</span>
+                <span
+                    class="ticker-change {{ 'neutral' if item.neutral else ('positive' if item.up else 'negative') }}">
+                    {{ '●' if item.neutral else ('▲' if item.up else '▼') }} {{ item.change }}
+                </span>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="ticker-item">
+                <span class="ticker-name">CONNECTING TO GLOBAL TERMINAL...</span>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Professional Ticker Styles */
+    .ticker-item {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-right: 4rem;
+        font-family: 'Inter', monospace;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .ticker-icon {
+        font-size: 1.2rem;
+    }
+
+    .ticker-name {
+        color: #888;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-transform: uppercase;
+    }
+
+    .ticker-value {
+        color: white;
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+
+    .ticker-change {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .ticker-change.positive {
+        color: #4ade80;
+    }
+
+    .ticker-change.negative {
+        color: #ef4444;
+    }
+
+    .ticker-change.neutral {
+        color: #94a3b8;
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0.4;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+</style>
+
+<!-- Hero Section (Centered & Containerized) -->
+<section
+    style="background: #fafafa; min-height: 85vh; display: flex; align-items: center; overflow: hidden; padding: 4rem 1rem;">
+    <div
+        style="max-width: 1280px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
+
+        <!-- Text Content -->
+        <div style="padding-right: 2rem; z-index: 10;">
+            <div class="fade-in-up" style="animation-delay: 0.1s;">
+                <div
+                    style="font-size: 0.75rem; font-weight: 700; background: black; color: white; display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 100px; margin-bottom: 1.5rem;">
+                    <span
+                        style="width: 6px; height: 6px; background: #10b981; border-radius: 50%; margin-right: 8px;"></span>
+                    CORE v2.0 LIVE
+                </div>
+                <h1
+                    style="font-size: 4rem; line-height: 1.1; font-weight: 800; letter-spacing: -2px; margin-bottom: 1.5rem; color: #111;">
+                    Find your <br>
+                    <span style="color: #666;">next unicorn.</span>
+                </h1>
+                <p style="font-size: 1.25rem; color: #666; line-height: 1.6; margin-bottom: 2.5rem; max-width: 500px;">
+                    The all-in-one platform for entrepreneurs. Market analysis, supplier matching, and financial
+                    modeling in seconds.
+                </p>
+
+                <!-- NEW: Integrated Hero Search -->
+                <div style="margin-bottom: 3rem;">
+                    <form action="{{ url_for('search') }}" method="POST"
+                        style="display: flex; gap: 0.5rem; background: white; padding: 0.5rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid #eee;">
+                        <input type="text" name="keyword" placeholder="What is your business idea? (e.g. Gym)"
+                            style="flex: 1; border: none; padding: 1rem; font-size: 1rem; outline: none;">
+                        <button type="submit" class="btn-black"
+                            style="padding: 0.5rem 2rem; border-radius: 8px;">Analyze</button>
+                    </form>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-bottom: 2.5rem;">
+                    <a href="{{ url_for('register') }}" class="btn-black" style="padding: 1rem 2.5rem;">Start
+                        Building</a>
+                    <a href="{{ url_for('dashboard') }}" class="btn-outline" style="padding: 1rem 2.5rem;">Live Demo</a>
+                </div>
+
+                <div style="display: flex; gap: 3rem; margin-top: 2rem;" class="fade-in-up">
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #111;">{{ stats.users }}+</div>
+                        <div style="font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px;">
+                            Active Users</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #111;">{{ stats.suppliers }}</div>
+                        <div style="font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px;">
+                            Suppliers</div>
+                    </div>
+                    <div>
+                        <div style="font-size: 1.5rem; font-weight: 800; color: #111;">{{ stats.projects }}</div>
+                        <div style="font-size: 0.85rem; color: #888; text-transform: uppercase; letter-spacing: 1px;">
+                            Active Plans</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Image Content (Frameless & Transparent) -->
+        <div style="position: relative; height: 600px; display: flex; align-items: center; justify-content: center;">
+            <div class="hero-image-container fade-in-left"
+                style="width: 125%; height: 125%; display: flex; align-items: center; justify-content: center;">
+                <img src="{{ url_for('static', filename='img/hero-dashboard.png') }}" alt="Dashboard"
+                    style="width: 100%; height: auto; object-fit: contain; filter: drop-shadow(0 40px 80px rgba(0,0,0,0.2));">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Engineered for Scale Banner -->
+<section
+    style="position: relative; padding: 10rem 2rem; overflow: hidden; display: flex; align-items: center; justify-content: center; background: #000;">
+
+    <!-- Background Image with Overlay -->
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+        <img src="{{ url_for('static', filename='img/Wavy_Tech-16_Single-11.jpg') }}" alt="Tech Background"
+            style="width: 100%; height: 100%; object-fit: cover; opacity: 0.4;">
+        <div
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to bottom, #0a0a0a 0%, rgba(10,10,10,0.8) 50%, #0a0a0a 100%);">
+        </div>
+    </div>
+
+    <!-- Content -->
+    <div style="position: relative; z-index: 10; max-width: 900px; text-align: center;">
+        <div class="scroll-reveal"
+            style="display: inline-block; margin-bottom: 2rem; padding: 0.5rem 1.5rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 100px; background: rgba(255,255,255,0.05); backdrop-filter: blur(10px);">
+            <span
+                style="color: #4ade80; font-weight: 700; font-size: 0.8rem; letter-spacing: 2px; text-transform: uppercase;">Student
+                Entrepreneur Hub</span>
+        </div>
+
+        <h2 class="scroll-reveal"
+            style="font-size: 5rem; font-weight: 800; color: white; line-height: 1; letter-spacing: -3px; margin-bottom: 2rem;">
+            From Vision to <span
+                style="background: linear-gradient(to right, #fff, #666); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">Reality.</span>
+        </h2>
+
+        <p class="scroll-reveal"
+            style="font-size: 1.5rem; color: #a1a1aa; line-height: 1.6; margin-bottom: 1rem; font-weight: 400;">
+            The premier digital assistant for aspiring entrepreneurs. Transform your business concept into a concrete
+            plan with real-time trend analysis, intelligent supplier matching, and automated cost forecasting.
+        </p>
+    </div>
+</section>
+
+<!-- How It Works (Project Journey - REFINED) -->
+<section style="padding: 10rem 2rem; background: white;">
+    <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+        <div
+            style="color: #0070f3; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 1.5rem; font-size: 0.9rem;">
+            THE PROCESS</div>
+        <h2
+            style="font-size: 4rem; font-weight: 900; margin-bottom: 6rem; letter-spacing: -3px; line-height: 1; color: #111;">
+            From Concept to <span style="opacity: 0.5;">Execution.</span>
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 4rem;">
+            <!-- Step 1 -->
+            <div class="scroll-reveal" style="text-align: left;">
+                <div
+                    style="font-family: 'Inter', sans-serif; font-size: 5rem; font-weight: 900; background: linear-gradient(180deg, #e5e7eb, #fff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: -1rem; position: relative; z-index: 0;">
+                    01</div>
+                <h3
+                    style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #111; padding-top: 1rem; position: relative; z-index: 1;">
+                    Venture Analysis</h3>
+                <p style="color: #666; font-size: 1.05rem; line-height: 1.7;">
+                    Input your business sector (e.g., Gym, Café). The algorithm parses your request to identify core
+                    infrastructure needs and equipment specifications.
+                </p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="scroll-reveal" style="text-align: left; transition-delay: 0.1s;">
+                <div
+                    style="font-family: 'Inter', sans-serif; font-size: 5rem; font-weight: 900; background: linear-gradient(180deg, #e5e7eb, #fff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: -1rem; position: relative; z-index: 0;">
+                    02</div>
+                <h3
+                    style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #111; padding-top: 1rem; position: relative; z-index: 1;">
+                    Strategic Sourcing</h3>
+                <p style="color: #666; font-size: 1.05rem; line-height: 1.7;">
+                    The engine conducts a comparative cost analysis between local availability and international
+                    imports, factoring in shipping logistics and customs tariffs.
+                </p>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="scroll-reveal" style="text-align: left; transition-delay: 0.2s;">
+                <div
+                    style="font-family: 'Inter', sans-serif; font-size: 5rem; font-weight: 900; background: linear-gradient(180deg, #e5e7eb, #fff); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; margin-bottom: -1rem; position: relative; z-index: 0;">
+                    03</div>
+                <h3
+                    style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1rem; color: #111; padding-top: 1rem; position: relative; z-index: 1;">
+                    Market Execution</h3>
+                <p style="color: #666; font-size: 1.05rem; line-height: 1.7;">
+                    Receive a comprehensive procurement plan optimized by live market indicators (Google Trends API) and
+                    financial forecasts (Yahoo Finance).
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Scrollytelling Trends Section (Premium & Realistic) -->
+<section style="background: linear-gradient(to bottom, #ffffff 0%, #fcfcfc 100%); padding-bottom: 8rem;">
+
+    <!-- Section Header -->
+    <div style="text-align: center; padding: 10rem 1rem 6rem;">
+        <div class="scroll-reveal"
+            style="margin-bottom: 1.5rem; display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0,0,0,0.03); padding: 0.5rem 1rem; border-radius: 100px;">
+            <span style="width: 8px; height: 8px; background: #000; border-radius: 50%;"></span>
+            <span
+                style="font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px;">Strategic
+                Foresight</span>
+        </div>
+        <h2 class="scroll-reveal"
+            style="font-size: 4rem; font-weight: 800; letter-spacing: -2px; margin-bottom: 1.5rem; line-height: 1;">
+            Future Trends 2026.
+        </h2>
+        <p class="scroll-reveal"
+            style="color: #666; font-size: 1.35rem; max-width: 650px; margin: 0 auto; line-height: 1.6;">
+            Proprietary market intelligence on the sectors defining the next decade.
+        </p>
+    </div>
+
+    <!-- Trend 1: Tech (Zig) -->
+    <div class="trend-section">
+        <div class="trend-content scroll-reveal-left">
+            <div style="color: #666; font-weight: 600; letter-spacing: 2px; margin-bottom: 1rem; font-size: 0.9rem;">
+                SECTOR 01</div>
+            <h4
+                style="font-size: 0.9rem; font-weight: 800; color: #111; margin-bottom: 0.5rem; text-transform: uppercase;">
+                Top Trend: {{ sectors.tech.keyword }}</h4>
+            <div
+                style="display: flex; gap: 2rem; margin-bottom: 2rem; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 1.5rem 0;">
+                <div>
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">SEARCH VOL</div>
+                    <div style="font-size: 1.25rem; font-weight: 800;">{{ sectors.tech.volume }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">MTD GROWTH</div>
+                    <div
+                        style="--growth-color: {{ '#10b981' if sectors.tech.growth > 0 else '#ef4444' }}; font-size: 1.25rem; font-weight: 800; color: var(--growth-color);">
+                        {{ sectors.tech.growth }}%</div>
+                </div>
+            </div>
+            <p class="trend-desc">
+                From neural interfaces to autonomous agents. The hardware layer driving the intelligence revolution is
+                seeing unprecedented capital inflow.
+            </p>
+            <a href="{{ url_for('trends_page') }}?category=tech" class="trend-link">View Market Analysis →</a>
+        </div>
+
+        <div class="trend-visual-frameless scroll-scale">
+            <img src="{{ url_for('static', filename='img/trend-tech.jpg') }}" alt="Tech Trend"
+                style="border-radius: 30px;">
+        </div>
+    </div>
+
+    <!-- Trend 2: Food (Zag) -->
+    <div class="trend-section reverse">
+        <div class="trend-visual-frameless scroll-scale">
+            <img src="{{ url_for('static', filename='img/trend-food.png') }}" alt="Food Trend"
+                style="border-radius: 30px;">
+        </div>
+
+        <div class="trend-content scroll-reveal-right">
+            <div style="color: #666; font-weight: 600; letter-spacing: 2px; margin-bottom: 1rem; font-size: 0.9rem;">
+                SECTOR 02</div>
+            <h4
+                style="font-size: 0.9rem; font-weight: 800; color: #111; margin-bottom: 0.5rem; text-transform: uppercase;">
+                Top Trend: {{ sectors.food.keyword }}</h4>
+            <div
+                style="display: flex; gap: 2rem; margin-bottom: 2rem; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 1.5rem 0;">
+                <div>
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">SEARCH VOL</div>
+                    <div style="font-size: 1.25rem; font-weight: 800;">{{ sectors.food.volume }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">MTD GROWTH</div>
+                    <div
+                        style="--growth-color: {{ '#10b981' if sectors.food.growth > 0 else '#ef4444' }}; font-size: 1.25rem; font-weight: 800; color: var(--growth-color);">
+                        {{ sectors.food.growth }}%</div>
+                </div>
+            </div>
+            <p class="trend-desc">
+                Beyond sustainability. Precision fermentation and algorithmic nutrition are reshaping global supply
+                chains from the molecule up.
+            </p>
+            <a href="{{ url_for('trends_page') }}?category=food" class="trend-link">View Market Analysis →</a>
+        </div>
+    </div>
+
+    <!-- Trend 3: Fashion (Zig) -->
+    <div class="trend-section">
+        <div class="trend-content scroll-reveal-left">
+            <div style="color: #666; font-weight: 600; letter-spacing: 2px; margin-bottom: 1rem; font-size: 0.9rem;">
+                SECTOR 03</div>
+            <h4
+                style="font-size: 0.9rem; font-weight: 800; color: #111; margin-bottom: 0.5rem; text-transform: uppercase;">
+                Top Trend: {{ sectors.fashion.keyword }}</h4>
+            <div
+                style="display: flex; gap: 2rem; margin-bottom: 2rem; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 1.5rem 0;">
+                <div>
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">SEARCH VOL</div>
+                    <div style="font-size: 1.25rem; font-weight: 800;">{{ sectors.fashion.volume }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">MTD GROWTH</div>
+                    <div
+                        style="--growth-color: {{ '#10b981' if sectors.fashion.growth > 0 else '#ef4444' }}; font-size: 1.25rem; font-weight: 800; color: var(--growth-color);">
+                        {{ sectors.fashion.growth }}%</div>
+                </div>
+            </div>
+            <p class="trend-desc">
+                Circular economy meets digital identity. The shift from fast-fashion to smart-textiles and AR-wearables
+                is accelerating.
+            </p>
+            <a href="{{ url_for('trends_page') }}?category=fashion" class="trend-link">View Market Analysis →</a>
+        </div>
+
+        <div class="trend-visual-frameless scroll-scale">
+            <img src="{{ url_for('static', filename='img/trend-fashion.jpg') }}" alt="Fashion Trend"
+                style="border-radius: 30px;">
+        </div>
+    </div>
+
+    <!-- Trend 4: Viral (Zag) -->
+    <div class="trend-section reverse">
+        <div class="trend-visual-frameless scroll-scale">
+            <img src="{{ url_for('static', filename='img/trend-viral.jpg') }}" alt="Viral Trend"
+                style="border-radius: 30px;">
+        </div>
+
+        <div class="trend-content scroll-reveal-right">
+            <div style="color: #666; font-weight: 600; letter-spacing: 2px; margin-bottom: 1rem; font-size: 0.9rem;">
+                SECTOR 04</div>
+            <h4
+                style="font-size: 0.9rem; font-weight: 800; color: #111; margin-bottom: 0.5rem; text-transform: uppercase;">
+                Top Trend: {{ sectors.gym.keyword }}</h4>
+            <div
+                style="display: flex; gap: 2rem; margin-bottom: 2rem; border-top: 1px solid #eee; border-bottom: 1px solid #eee; padding: 1.5rem 0;">
+                <div>
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">SEARCH VOL</div>
+                    <div style="font-size: 1.25rem; font-weight: 800;">{{ sectors.gym.volume }}</div>
+                </div>
+                <div>
+                    <div style="font-size: 0.8rem; color: #888; margin-bottom: 0.25rem;">MTD GROWTH</div>
+                    <div
+                        style="--growth-color: {{ '#10b981' if sectors.gym.growth > 0 else '#ef4444' }}; font-size: 1.25rem; font-weight: 800; color: var(--growth-color);">
+                        {{ sectors.gym.growth }}%</div>
+                </div>
+            </div>
+            <p class="trend-desc">
+                Algorithmic fame and short-form commerce. Capturing the zeitgeist is now a quantifiable and replicable
+                business model.
+            </p>
+            <a href="{{ url_for('trends_page') }}?category=all" class="trend-link">View Market Analysis →</a>
+        </div>
+    </div>
+
+</section>
+
+<!-- Footer / CTA -->
+<section style="padding: 8rem 2rem; background: black; color: white; text-align: center;">
+    <h2 class="scroll-reveal" style="font-size: 3rem; font-weight: 800; margin-bottom: 2rem;">Ready to dominate the
+        market?</h2>
+    <a href="{{ url_for('register') }}" class="btn-white scroll-reveal">Get Started Free</a>
+</section>
+
+<style>
+    /* Professional Grid-based Zig-Zag Layout */
+    .trend-section {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        align-items: center !important;
+        min-height: 80vh !important;
+        padding: 6rem 8rem !important;
+        gap: 10rem !important;
+        max-width: 1440px !important;
+        margin: 0 auto !important;
+        position: relative !important;
+        overflow: visible !important;
+    }
+
+    .trend-section.reverse {
+        direction: ltr;
+        /* Ensure layout remains consistent */
+    }
+
+    .trend-section.reverse .trend-content {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right;
+        align-items: flex-end;
+    }
+
+    .trend-section.reverse .trend-visual-frameless {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .trend-content {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        z-index: 10;
+    }
+
+    .trend-visual-frameless {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .trend-visual-frameless img {
+        width: 100%;
+        max-width: 600px;
+        height: auto;
+        border-radius: 0;
+        box-shadow: none;
+        transition: all 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .trend-visual-frameless:hover img {
+        transform: scale(1.05) translateY(-20px);
+    }
+
+    .trend-title {
+        font-size: 4.5rem !important;
+        font-weight: 900 !important;
+        line-height: 1 !important;
+        letter-spacing: -3px !important;
+        margin-bottom: 2rem !important;
+    }
+
+    .trend-desc {
+        font-size: 1.4rem !important;
+        color: #444 !important;
+        line-height: 1.6 !important;
+        margin-bottom: 3rem !important;
+        max-width: 500px !important;
+    }
+
+    .trend-link {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: black;
+        text-decoration: none;
+        padding-bottom: 8px;
+        border-bottom: 3px solid black;
+        width: fit-content;
+        transition: 0.3s;
+    }
+
+    .trend-link:hover {
+        padding-left: 10px;
+        color: #666;
+        border-color: #666;
+    }
+
+    /* Animation States */
+    .scroll-reveal {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: all 1s ease;
+    }
+
+    .scroll-reveal-left {
+        opacity: 0;
+        transform: translateX(-80px);
+        transition: all 1s ease;
+    }
+
+    .scroll-reveal-right {
+        opacity: 0;
+        transform: translateX(80px);
+        transition: all 1s ease;
+    }
+
+    .scroll-scale {
+        opacity: 0;
+        transform: scale(0.9);
+        transition: all 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .visible {
+        opacity: 1 !important;
+        transform: translate(0) scale(1) !important;
+    }
+
+    /* Clear Mobile Fallback */
+    @media (max-width: 900px) {
+        .trend-section {
+            display: flex !important;
+            flex-direction: column !important;
+            padding: 4rem 2rem !important;
+            gap: 4rem !important;
+            text-align: center !important;
+            min-height: auto !important;
+        }
+
+        .trend-section.reverse .trend-content {
+            text-align: center;
+            align-items: center;
+        }
+
+        .trend-visual-frameless {
+            order: -1;
+        }
+
+        .trend-title {
+            font-size: 3rem !important;
+        }
+    }
+</style>
+
+<script>
+    // GSAP-like Scroll Observer
+    document.addEventListener("DOMContentLoaded", function () {
+        const observerOptions = {
+            threshold: 0.15,
+            rootMargin: "0px"
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("visible");
+                }
+            });
+        }, observerOptions);
+
+        const elements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right, .scroll-scale');
+        elements.forEach(el => observer.observe(el));
+    });
+</script>
+{% endblock %}

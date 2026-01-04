@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container" style="padding-top: 3rem; padding-bottom: 5rem;">
+
+    <!-- Analysis Meta -->
+    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 4rem;">
+        <div>
+            <div
+                style="background: black; color: white; display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; margin-bottom: 1rem;">
+                SMART ANALYSIS v2.4</div>
+            <h1 style="font-size: 3.5rem; font-weight: 900; letter-spacing: -2px; line-height: 1;">Project: <span
+                    style="color: #0070f3;">{{ keyword|title }}</span></h1>
+            <p style="color: #666; font-size: 1.2rem; margin-top: 1rem;">Comprehensive feasibility report for your new
+                venture.</p>
+        </div>
+        <div style="display: flex; gap: 1rem;">
+            <a href="{{ url_for('download_report', keyword=keyword) }}" class="btn-outline">Download PDF Report</a>
+            <a href="{{ url_for('dashboard') }}" class="btn-black">New Analysis</a>
+        </div>
+    </div>
+
+    <!-- Executive Summary Bento -->
+    <div class="bento-grid" style="margin-bottom: 4rem;">
+
+        <!-- Local vs International Summary -->
+        <div class="bento-card bento-span-2" style="background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3 style="font-size: 1.25rem;">Global Sourcing Comparison</h3>
+                <span
+                    style="font-size: 0.8rem; background: #f0f0f0; padding: 4px 10px; border-radius: 100px; font-weight: 600;">{{
+                    suppliers|length }} Nodes Analyzed</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;">
+                <!-- Local Column -->
+                <div style="background: #f8fafc; padding: 1.5rem; border-radius: 12px; min-width: 0;">
+                    <div style="color: #64748b; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Local
+                        Advantage (Jordan)</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; margin-top: 0.5rem; color: #0f172a;">
+                        {{ comp.local.count }} Options
+                    </div>
+                    <p style="font-size: 0.85rem; color: #475569; margin-top: 1rem; line-height: 1.6;">
+                        Avg Shipping: <span style="font-weight: 700;">${{ "{:,.0f}".format(comp.local.avg_shipping)
+                            }}</span><br>
+                        Avg Tax: <span style="font-weight: 700;">${{ "{:,.0f}".format(comp.local.avg_tax) }}</span><br>
+                        <span style="color: #10b981; font-weight: 600;">✓ Tax Compliant Sourcing</span>
+                    </p>
+                </div>
+                <!-- International Column -->
+                <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 12px; min-width: 0;">
+                    <div style="color: #64748b; font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">
+                        International Value</div>
+                    <div style="font-size: 1.75rem; font-weight: 800; margin-top: 0.5rem; color: #0f172a;">
+                        {{ comp.intl.count }} Global
+                    </div>
+                    <p style="font-size: 0.85rem; color: #475569; margin-top: 1rem; line-height: 1.6;">
+                        Avg Shipping: <span style="font-weight: 700;">${{ "{:,.0f}".format(comp.intl.avg_shipping)
+                            }}</span><br>
+                        Avg Tax: <span style="font-weight: 700;">${{ "{:,.0f}".format(comp.intl.avg_tax) }}</span><br>
+                        <span style="color: #3b82f6; font-weight: 600;">↗ Significant Volume Scale</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Buzz Integration (CLIENT REQ) -->
+        <div class="bento-card" style="background: black; color: white;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+                <span style="font-size: 1.5rem;">🔥</span>
+                <h3 style="color: white; font-size: 1.25rem;">Social Buzz</h3>
+            </div>
+            <div style="font-size: 3.5rem; font-weight: 900; line-height: 1;">{{ social.buzz_score }}%</div>
+            <p style="color: #aaa; font-size: 0.9rem; margin: 0.5rem 0 2rem;">Interest Momentum</p>
+
+            <div style="border-top: 1px solid #333; padding-top: 1.5rem;">
+                <div style="font-size: 0.8rem; color: #888; text-transform: uppercase; margin-bottom: 1rem;">Trending on
+                    {{ social.platforms|join('/') }}</div>
+                {% for prod in social.trending_products %}
+                <div
+                    style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem;">
+                    <span style="font-size: 0.95rem; font-weight: 500;">{{ prod.name }}</span>
+                    <span style="color: #10b981; font-size: 0.8rem; font-weight: 700;">+{{ prod.growth }}%</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Market Data -->
+    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 4rem;">
+
+        <!-- Google Trends Visual -->
+        <div class="bento-card" style="background: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+                <h3>Search Interest Trajectory</h3>
+                <span style="color: #0070f3; font-weight: 600; font-size: 0.9rem;">Source: Google Trends</span>
+            </div>
+            {% if trends %}
+            <div style="height: 300px;">
+                <canvas id="mainTrendChart"></canvas>
+            </div>
+            <script>
+                const ctx = document.getElementById('mainTrendChart').getContext('2d');
+                const trendData = {{ trends| tojson }};
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: Object.keys(trendData),
+                        datasets: [{
+                            label: 'Interest',
+                            data: Object.values(trendData),
+                            borderColor: '#000',
+                            backgroundColor: 'rgba(0,0,0,0.02)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.5,
+                            pointRadius: 0
+                        }]
+                    },
+                    options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { grid: { display: false } } } }
+                });
+            </script>
+            {% else %}
+            <div
+                style="height: 300px; display: flex; align-items: center; justify-content: center; color: #999; background: #fafafa; border-radius: 8px;">
+                No data available</div>
+            {% endif %}
+        </div>
+
+        <!-- Google Finance Pulse -->
+        <div class="bento-card"
+            style="background: #fafafa; display: flex; flex-direction: column; justify-content: center;">
+            <div style="text-align: center;">
+                <div style="font-size: 0.8rem; color: #888; text-transform: uppercase;">Global Trade Index</div>
+                <div style="font-size: 4rem; font-weight: 900; margin: 1rem 0;">${{ finance.current_price if finance
+                    else '142.0' }}</div>
+                <div
+                    style="display: inline-flex; align-items: center; gap: 0.5rem; background: {{ '#ecfdf5' if (not finance or finance.trend == 'up') else '#fef2f2' }}; color: {{ '#059669' if (not finance or finance.trend == 'up') else '#dc2626' }}; padding: 6px 16px; border-radius: 100px; font-weight: 700;">
+                    {{ '▲' if (not finance or finance.trend == 'up') else '▼' }} {{ finance.change_percent if finance
+                    else '2.4' }}%
+                </div>
+                <p style="margin-top: 2rem; color: #666; font-size: 0.9rem;">
+                    {% if finance and finance.trend == 'up' %}
+                    Market indicators show positive momentum ({{ finance.ticker }}), suggesting growth potential for {{
+                    keyword|title }}.
+                    {% else %}
+                    Market indicators suggest favorable buying conditions ({{ finance.ticker if finance else 'INDEX'
+                    }}), supporting entry for {{ keyword|title }}.
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recommendation Ranking -->
+    <h2 style="font-size: 2rem; font-weight: 900; margin-bottom: 2rem; letter-spacing: -1px;">Scored Recommendations.
+    </h2>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
+        {% for item in suppliers %}
+        <div class="bento-card"
+            style="background: white; border: 1px solid #eee; display: flex; flex-direction: column; height: 100%;">
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; margin-bottom: 1.5rem;">
+                <div>
+                    <h4 style="font-size: 1.5rem; font-weight: 800;">{{ item.supplier.name }}</h4>
+                    <span style="font-size: 0.9rem; color: #666;">{{ item.supplier.location }}</span>
+                </div>
+                <div style="text-align: right;">
+                    <div style="font-size: 1.5rem; font-weight: 800; color: #0070f3;">{{ item.score }}</div>
+                    <div style="font-size: 0.75rem; color: #666; text-transform: uppercase;">Match Score</div>
+                </div>
+            </div>
+
+            <!-- Tags -->
+            <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+                <div
+                    style="background: {{ '#e0f2fe' if item.is_local else '#fef3c7' }}; color: {{ '#0369a1' if item.is_local else '#92400e' }}; padding: 4px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 700;">
+                    {{ 'Local Partner' if item.is_local else 'Global Supplier' }}
+                </div>
+                <div
+                    style="background: #f0fdf4; color: #166534; padding: 4px 12px; border-radius: 6px; font-size: 0.85rem; font-weight: 700;">
+                    {{ item.supplier.product_quality }} Quality
+                </div>
+            </div>
+
+            <!-- Cost Breakdown -->
+            <div style="background: #f8fafc; border-radius: 12px; padding: 1.5rem; margin-top: auto;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.95rem;">
+                    <span style="color: #64748b;">Shipping Costs</span>
+                    <span style="font-weight: 700;">${{ item.shipping_raw }}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.95rem;">
+                    <span style="color: #64748b;">Import Taxes (Est.)</span>
+                    <span style="font-weight: 700;">${{ item.tax_raw }}</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; padding-top: 1rem; border-top: 1px solid #e2e8f0; margin-top: 0.5rem;">
+                    <span style="font-weight: 800; color: #0f172a;">Total Logistics</span>
+                    <span style="font-weight: 800; color: #0070f3; font-size: 1.1rem;">${{ item.total_cost }}</span>
+                </div>
+            </div>
+
+            <button class="btn-black"
+                style="width: 100%; margin-top: 2rem; padding: 1rem; display: flex; align-items: center; justify-content: center; gap: 0.75rem;">
+                <span>📦</span> Add to Procurement Plan
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+</style>
+{% endblock %}

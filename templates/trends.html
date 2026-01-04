@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar (Shared Component) -->
+    <div class="db-sidebar">
+        <div style="margin-bottom: 2rem;">
+            <div
+                style="color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; font-weight: 600;">
+                Menu
+            </div>
+            <a href="{{ url_for('dashboard') }}" class="db-link">
+                📊 Dashboard
+            </a>
+            <a href="{{ url_for('trends_page') }}" class="db-link active">
+                📈 Trend Analytics
+            </a>
+            <a href="{{ url_for('cart') }}" class="db-link">
+                🛒 Supplier Basket
+            </a>
+            <a href="#" class="db-link">
+                ⚙️ Settings
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="db-content">
+        <div style="margin-bottom: 2.5rem;">
+            <h1 style="font-size: 1.75rem; font-weight: 700;">Global Market Trends (2026 Simulation)</h1>
+            <p style="color: var(--text-secondary);">Real-time insights powered by AI Prediction Engine.</p>
+        </div>
+
+        <!-- Bento Grid Layout -->
+        <div class="bento-grid" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2rem;">
+
+            <!-- Global Heatmap -->
+            <div class="bento-card bento-span-2"
+                style="background: white; display: flex; flex-direction: column; padding: 0;">
+                <!-- Card Header (Inside Padding) -->
+                <div style="padding: 1.5rem 1.5rem 1rem 1.5rem; display: flex; justify-content: space-between;">
+                    <h3 style="margin:0;">🔥 Global Supply Ecosystem (2026 HUD)</h3>
+                    <div style="font-size: 0.8rem; color: #10b981; display: flex; align-items: center; gap: 0.5rem;">
+                        <span
+                            style="width: 8px; height: 8px; background: #10b981; border-radius: 50%; display: inline-block; box-shadow: 0 0 8px #10b981;"></span>
+                        Live Data Feed
+                    </div>
+                </div>
+
+                <!-- Real Leaflet Map HUD Area -->
+                <div id="tech-map"
+                    style="height: 850px; background: #0a0a0a; position: relative; border-top: 1px solid #eee; border-bottom: 1px solid #eee;">
+                    <!-- HUD Overlay Indicators -->
+                    <div
+                        style="position: absolute; top: 1rem; left: 1rem; z-index: 1000; font-family: monospace; font-size: 0.7rem; color: #4ade80; background: rgba(0,0,0,0.85); padding: 5px 10px; border: 1px solid #4ade80; border-radius: 4px; pointer-events: none;">
+                        ● HUB ONLINE | ACTIVE_NODES: {{ suppliers|length }}
+                    </div>
+                    <div
+                        style="position: absolute; bottom: 1rem; right: 1rem; z-index: 1000; font-family: monospace; font-size: 0.7rem; color: #4ade80; text-align: right; background: rgba(0,0,0,0.85); padding: 5px 10px; border: 1px solid #4ade80; border-radius: 4px; pointer-events: none;">
+                        MATRIX: 256-BIT<br>
+                        COORD_LOCK: TRUE
+                    </div>
+                </div>
+
+                <!-- Seamless Filter Bar (Integrated into card bottom) -->
+                <div style="padding: 1rem 1.5rem; background: #fafafa;">
+                    <form method="GET" action="{{ url_for('trends_page') }}"
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <h3 style="margin: 0; white-space: nowrap; font-size: 1rem;">⚡ Filter Global Intelligence:
+                            </h3>
+                            <div style="position: relative;">
+                                <select name="category" onchange="this.form.submit()"
+                                    style="appearance: none; background: white; border: 1px solid #ddd; padding: 0.5rem 2rem 0.5rem 1rem; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 0.85rem;">
+                                    <option value="all" {% if current_category=='all' %}selected{% endif %}>All
+                                        Industries</option>
+                                    <option value="tech" {% if current_category=='tech' %}selected{% endif %}>Technology
+                                        & AI</option>
+                                    <option value="fashion" {% if current_category=='fashion' %}selected{% endif %}>
+                                        Fashion & Retail</option>
+                                    <option value="food" {% if current_category=='food' %}selected{% endif %}>Food &
+                                        Beverage</option>
+                                    <option value="gym" {% if current_category=='gym' %}selected{% endif %}>Fitness &
+                                        Wellness</option>
+                                </select>
+                                <span
+                                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); pointer-events: none; font-size: 0.7rem;">▼</span>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 0.5rem; background: #eee; padding: 4px; border-radius: 8px;">
+                            <button type="submit" name="timeframe" value="24h"
+                                class="filter-pill {% if current_timeframe == '24h' %}active{% endif %}">24H</button>
+                            <button type="submit" name="timeframe" value="7d"
+                                class="filter-pill {% if current_timeframe == '7d' %}active{% endif %}">7 Days</button>
+                            <button type="submit" name="timeframe" value="30d"
+                                class="filter-pill {% if current_timeframe == '30d' %}active{% endif %}">30
+                                Days</button>
+                            <button type="submit" name="timeframe" value="ytd"
+                                class="filter-pill {% if current_timeframe == 'ytd' %}active{% endif %}">2026
+                                YTD</button>
+                        </div>
+                    </form>
+                </div>
+
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const map = L.map('tech-map', { zoomControl: false, attributionControl: false }).setView([20, 0], 2);
+                        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { subdomains: 'abcd', maxZoom: 10 }).addTo(map);
+
+                        const locs = { 'Jordan': [31.9454, 35.9284], 'China': [35.8617, 104.1954], 'USA': [37.0902, -95.7129], 'Italy': [41.8719, 12.5674], 'Turkey': [38.9637, 35.2433], 'Vietnam': [14.0583, 108.2772], 'France': [46.2276, 2.2137] };
+                        const icon = L.divIcon({ className: 'custom-pulse', html: '<div class="map-pulse"></div>', iconSize: [20, 20] });
+
+                        {% for s in suppliers %}
+                        (function () {
+                            let rawLoc = "{{ s.location }}";
+                            let coords = [0, 0];
+                            if (rawLoc.includes('Jordan')) coords = locs['Jordan'];
+                            else if (rawLoc.includes('China')) coords = locs['China'];
+                            else if (rawLoc.includes('USA')) coords = locs['USA'];
+                            else if (rawLoc.includes('Italy')) coords = locs['Italy'];
+                            else if (rawLoc.includes('Turkey')) coords = locs['Turkey'];
+                            else if (rawLoc.includes('Vietnam')) coords = locs['Vietnam'];
+                            else if (rawLoc.includes('France')) coords = locs['France'];
+                            if (coords[0] !== 0) {
+                                L.marker(coords, { icon: icon }).addTo(map).bindPopup(`<b style="color:black;">{{ s.name }}</b><br><span style="color:black;">{{ s.location }}</span>`);
+                            }
+                        })();
+                        {% endfor %}
+                    });
+                </script>
+
+                <style>
+                    .map-pulse {
+                        width: 10px;
+                        height: 10px;
+                        background: #4ade80;
+                        border-radius: 50%;
+                        box-shadow: 0 0 10px #4ade80;
+                        animation: pulse-ring 2s infinite;
+                    }
+
+                    @keyframes pulse-ring {
+                        0% {
+                            transform: scale(0.8);
+                            opacity: 0.8;
+                            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.7);
+                        }
+
+                        70% {
+                            transform: scale(1.2);
+                            opacity: 0.4;
+                            box-shadow: 0 0 0 10px rgba(74, 222, 128, 0);
+                        }
+
+                        100% {
+                            transform: scale(0.8);
+                            opacity: 0.8;
+                            box-shadow: 0 0 0 0 rgba(74, 222, 128, 0);
+                        }
+                    }
+
+                    .leaflet-popup-content-wrapper {
+                        background: rgba(255, 255, 255, 0.9);
+                        border-radius: 4px;
+                    }
+
+                    .filter-pill {
+                        border: none;
+                        background: transparent;
+                        padding: 6px 16px;
+                        border-radius: 6px;
+                        font-size: 0.85rem;
+                        font-weight: 500;
+                        color: #666;
+                        cursor: pointer;
+                        transition: all 0.2s;
+                    }
+
+                    .filter-pill:hover {
+                        background: rgba(255, 255, 255, 0.5);
+                    }
+
+                    .filter-pill.active {
+                        background: white;
+                        color: black;
+                        font-weight: 700;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+                    }
+                </style>
+            </div>
+
+            <!-- Top Movers (Dynamic Table) -->
+            <div class="bento-card bento-span-2"
+                style="background: white; padding: 0; min-height: auto; overflow: visible;">
+                <div
+                    style="padding: 1.5rem; border-bottom: 1px solid #eaeaea; display: flex; justify-content: space-between; align-items: center;">
+                    <h3>🚀 Top Movers ({{ current_category|title }})</h3>
+                    <div style="font-size: 0.8rem; color: #666; display: flex; gap: 1rem;">
+                        <span><span style="color: #10b981;">●</span> High Demand</span>
+                        <span><span style="color: #3b82f6;">●</span> Stable</span>
+                        <span><span style="color: #ef4444;">●</span> Volatile</span>
+                    </div>
+                </div>
+
+                <!-- Table Container (Fully Expanded) -->
+                <div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <thead
+                            style="background: #fafafa; color: #666; font-size: 0.75rem; text-transform: uppercase; position: sticky; top: 0; z-index: 10;">
+                            <tr>
+                                <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600;">Rank</th>
+                                <th style="padding: 1rem 1.5rem; text-align: left; font-weight: 600;">Keyword / Niche
+                                </th>
+                                <th style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">Search Volume
+                                </th>
+                                <th style="padding: 1rem 1.5rem; text-align: right; font-weight: 600;">Growth (YOY)</th>
+                                <th style="padding: 1rem 1.5rem; text-align: center; font-weight: 600;">Status</th>
+                                <th style="padding: 1rem 1.5rem; text-align: center; font-weight: 600;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in trends %}
+                            <tr style="border-bottom: 1px solid #eaeaea; transition: background 0.2s;"
+                                onmouseover="this.style.background='#fafafa'"
+                                onmouseout="this.style.background='white'">
+                                <td style="padding: 1rem 1.5rem; color: #999;">#{{ "%02d" % item.rank }}</td>
+                                <td style="padding: 1rem 1.5rem; font-weight: 600;">
+                                    {{ item.keyword }}
+                                    <div style="font-size: 0.75rem; color: #888; font-weight: 400;">{{
+                                        current_category|title }} / Global</div>
+                                </td>
+                                <td style="padding: 1rem 1.5rem; text-align: right; font-family: 'Inter', monospace;">{{
+                                    item.volume }}</td>
+                                <td style="padding: 1rem 1.5rem; text-align: right; color: #10b981; font-weight: 600;">
+                                    +{{
+                                    item.growth }}% ▲</td>
+                                <td style="padding: 1rem 1.5rem; text-align: center;">
+                                    {% if item.status == 'Exploding' %}
+                                    <span
+                                        style="font-size: 0.7rem; background: #ecfdf5; color: #10b981; padding: 4px 8px; border-radius: 20px; font-weight: 700;">EXPLODING</span>
+                                    {% elif item.status == 'Rising' %}
+                                    <span
+                                        style="font-size: 0.7rem; background: #eff6ff; color: #3b82f6; padding: 4px 8px; border-radius: 20px; font-weight: 700;">RISING</span>
+                                    {% elif item.status == 'Volatile' %}
+                                    <span
+                                        style="font-size: 0.7rem; background: #fef2f2; color: #ef4444; padding: 4px 8px; border-radius: 20px; font-weight: 700;">VOLATILE</span>
+                                    {% else %}
+                                    <span
+                                        style="font-size: 0.7rem; background: #f5f5f5; color: #666; padding: 4px 8px; border-radius: 20px; font-weight: 700;">{{
+                                        item.status|upper }}</span>
+                                    {% endif %}
+                                </td>
+                                <td style="padding: 1rem 1.5rem; text-align: center;">
+                                    <a href="{{ url_for('results', keyword=item.keyword) }}"
+                                        style="color: white; background: black; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 500;">Analyze</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <style>
+                    /* Custom Scrollbar for Top Movers */
+                    .bento-card div::-webkit-scrollbar {
+                        width: 8px;
+                    }
+
+                    .bento-card div::-webkit-scrollbar-track {
+                        background: #f1f1f1;
+                        border-radius: 10px;
+                    }
+
+                    .bento-card div::-webkit-scrollbar-thumb {
+                        background: #888;
+                        border-radius: 10px;
+                    }
+
+                    .bento-card div::-webkit-scrollbar-thumb:hover {
+                        background: #555;
+                    }
+                </style>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}
