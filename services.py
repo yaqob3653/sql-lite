@@ -8,10 +8,13 @@ from datetime import datetime, timedelta
 
 # Global SSL Fix for environments with path encoding issues
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-cert_path = r'C:\Users\Public\cacert.pem'
-if os.path.exists(cert_path):
-    os.environ['SSL_CERT_FILE'] = cert_path
-    os.environ['REQUESTS_CA_BUNDLE'] = cert_path
+
+# Only apply the local cert fix if on Windows and the specific path exists
+if os.name == 'nt':
+    cert_path = r'C:\Users\Public\cacert.pem'
+    if os.path.exists(cert_path):
+        os.environ['SSL_CERT_FILE'] = cert_path
+        os.environ['REQUESTS_CA_BUNDLE'] = cert_path
 
 def get_market_trends(keyword):
     """
