@@ -10,7 +10,6 @@ def seed_database():
         Supplier.query.delete()
         User.query.delete()
         
-        # 1. Admin User
         admin = User(
             username='bussiness_owner',
             email='admin@example.com',
@@ -18,7 +17,17 @@ def seed_database():
             role='student'
         )
         db.session.add(admin)
-        print("-> Added User: admin@example.com / 123456")
+        print("-> Added User: admin@example.com (Student)")
+
+        # 1.5 Supplier User
+        supplier_user = User(
+            username='global_supplier',
+            email='supplier@example.com',
+            password=generate_password_hash('123456', method='pbkdf2:sha256'),
+            role='supplier'
+        )
+        db.session.add(supplier_user)
+        print("-> Added User: supplier@example.com (Supplier)")
 
         # 2. Rich Supplier Data
         suppliers_data = [
