@@ -1,3 +1,4 @@
+# v1.1 - Cloud Stability Patch
 import yfinance as yf
 from pytrends.request import TrendReq
 import pandas as pd
