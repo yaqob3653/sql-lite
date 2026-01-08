@@ -1,11 +1,12 @@
 from app import app
-from models import db, User, Supplier, Product
+from models import db, User, Supplier, Product, Project
 from werkzeug.security import generate_password_hash
 
 def seed_database():
     with app.app_context():
         db.create_all()
         print("Cleaning old data...")
+        Project.query.delete()
         Product.query.delete()
         Supplier.query.delete()
         User.query.delete()
@@ -104,7 +105,7 @@ def seed_database():
         db.session.add_all(products)
         db.session.commit()
         print(f"-> Added {len(products)} products.")
-        print("Database functionality expanded!")
+        print("Database initialized successfully.")
 
 if __name__ == '__main__':
     seed_database()
