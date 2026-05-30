@@ -1,0 +1,13 @@
+Flask
+Flask-SQLAlchemy
+Flask-Login
+Flask-WTF
+pytrends
+yfinance
+pandas
+reportlab
+openpyxl
+requests
+python-dotenv
+gunicorn
+certifi

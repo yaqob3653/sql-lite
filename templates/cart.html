@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <div class="db-sidebar" style="background: #fafafa; border-right: 1px solid #eaeaea;">
+        <div style="margin-bottom: 2rem;">
+            <div
+                style="color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; font-weight: 600; padding-left: 12px;">
+                Main</div>
+            <a href="{{ url_for('dashboard') }}" class="db-link"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="7" height="9" x="3" y="3" rx="1" />
+                    <rect width="7" height="5" x="14" y="3" rx="1" />
+                    <rect width="7" height="9" x="14" y="12" rx="1" />
+                    <rect width="7" height="5" x="3" y="16" rx="1" />
+                </svg>
+                Dashboard
+            </a>
+            <a href="{{ url_for('trends_page') }}" class="db-link"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="22 7 13.5 15.5 8.5 10.5 2 17" />
+                    <polyline points="16 7 22 7 22 13" />
+                </svg>
+                Market Analysis
+            </a>
+            <div
+                style="color: #888; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin: 1.5rem 0 0.8rem; font-weight: 600; padding-left: 12px;">
+                Procurement</div>
+            <a href="{{ url_for('cart') }}" class="db-link active"
+                style="display: flex; align-items: center; gap: 10px; padding: 10px 12px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="8" cy="21" r="1" />
+                    <circle cx="19" cy="21" r="1" />
+                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12" />
+                </svg>
+                Supplier Basket
+            </a>
+        </div>
+
+        <div style="margin-top: auto;">
+            <div style="padding: 0.8rem; background: #f5f5f5; border-radius: 6px; border: 1px solid #eee;">
+                <div
+                    style="font-size: 0.75rem; font-weight: 600; color: #111; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;">
+                    System Status</div>
+                <div
+                    style="font-size: 0.7rem; color: #666; margin: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; font-family: monospace;">
+                    <span style="width: 4px; height: 4px; background: #10b981; border-radius: 50%;"></span>
+                    API_GATEWAY: ONLINE
+                </div>
+                <div
+                    style="font-size: 0.7rem; color: #666; margin: 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; font-family: monospace;">
+                    <span style="width: 4px; height: 4px; background: #10b981; border-radius: 50%;"></span>
+                    DB_SHARD_1: ACTIVE
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="db-content">
+        <h1 style="font-size: 1.75rem; font-weight: 700; margin-bottom: 2rem;">Procurement Basket</h1>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
+
+            <!-- List of Items -->
+            <div
+                style="background: white; border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr
+                            style="text-align: left; background: #fafafa; border-bottom: 1px solid var(--border-color);">
+                            <th
+                                style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">
+                                Supplier</th>
+                            <th
+                                style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">
+                                Product Type</th>
+                            <th
+                                style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase;">
+                                MOQ</th>
+                            <th
+                                style="padding: 1rem; font-size: 0.85rem; color: var(--text-secondary); text-transform: uppercase; text-align: right;">
+                                Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 1.5rem 1rem;">
+                                <div style="font-weight: 600;">Shenzhen Tech Co.</div>
+                                <div style="font-size: 0.8rem; color: #666;">ID: #SHZ-9928</div>
+                            </td>
+                            <td style="padding: 1rem;">Electronics</td>
+                            <td style="padding: 1rem;">500 Units</td>
+                            <td style="padding: 1rem; text-align: right;">
+                                <a href="#" style="color: #ef4444; font-size: 0.9rem;">Remove</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 1.5rem 1rem;">
+                                <div style="font-weight: 600;">Vietnam Textiles Ltd</div>
+                                <div style="font-size: 0.8rem; color: #666;">ID: #VN-2211</div>
+                            </td>
+                            <td style="padding: 1rem;">Apparel</td>
+                            <td style="padding: 1rem;">1000 Units</td>
+                            <td style="padding: 1rem; text-align: right;">
+                                <a href="#" style="color: #ef4444; font-size: 0.9rem;">Remove</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Summary Card -->
+            <div
+                style="background: #fafafa; border: 1px solid var(--border-color); border-radius: 12px; padding: 2rem; height: fit-content;">
+                <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1.5rem;">Order Summary</h3>
+
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem;">
+                    <span style="color: #666;">Subtotal (Est.)</span>
+                    <span style="font-weight: 600;">$14,200</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-size: 0.9rem;">
+                    <span style="color: #666;">Shipping & Tax</span>
+                    <span style="font-weight: 600;">$1,200</span>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #eaeaea; margin-bottom: 2rem;">
+                    <span style="font-weight: 700;">Total</span>
+                    <span style="font-weight: 700; font-size: 1.25rem;">$15,400</span>
+                </div>
+
+                <button class="btn-full" style="background: #000; color: white;">Request Formal Quote</button>
+                <div style="margin-top: 1rem; text-align: center; font-size: 0.8rem; color: #999;">
+                    Quotes are valid for 7 days.
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-wrapper">
+    <!-- Left: Form -->
+    <div class="auth-content">
+        <div class="auth-header">
+            <h2>Welcome Back</h2>
+            <p>Access your Entrepreneur Dashboard.</p>
+        </div>
+
+        <form method="POST" action="">
+            <button type="submit" class="btn-full" style="padding: 1rem; font-size: 1rem; font-weight: 700;">
+                Enter Dashboard →
+            </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; text-align: center; font-size: 0.85rem; color: #888;">
+            Secure Access • Version 2.0
+        </div>
+    </div>
+
+    <!-- Right: Illustration -->
+    <div class="auth-sidebar">
+        <img src="{{ url_for('static', filename='img/auth-bg.png') }}" alt="Dynamic Professional">
+    </div>
+</div>
+{% endblock %}
